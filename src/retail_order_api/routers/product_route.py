@@ -1,13 +1,17 @@
-from fastapi import APIRouter, HTTPException
-from retail_order_api.services.product_service import ProductNotFoundError, ProductStockNotAvailableError, delete_product_service, get_products_service, modify_product_service, save_product_service, get_product_service
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+
+from retail_order_api.services.product_service import ProductNotFoundError, ProductStockNotAvailableError, delete_product_service, get_products_service, update_product_service, save_product_service, get_product_service
 from retail_order_api.schemas.product import ProductCreate, ProductResponse
+from retail_order_api.db.database import get_db
 
 router = APIRouter()
 
-@router.post("/products")
-def create_product(product_data: ProductCreate):
+@router.post("/")
+def create_product(product_data: ProductCreate, db: Session = Depends(get_db)):
     try:
-        product = save_product_service(product_data)
+        product = save_product_service(product_data, db)
     
     except ProductStockNotAvailableError:
         raise HTTPException(status_code=400, detail="Product stock not available")
@@ -18,9 +22,9 @@ def create_product(product_data: ProductCreate):
     }
 
 @router.get("/products/{product_id}")
-def get_product(product_id: int):
+def get_product(product_id: int, db: Session = Depends(get_db)):
     try:
-        product = get_product_service(product_id)
+        product = get_product_service(product_id, db)
         return product
     
     except ProductNotFoundError:
@@ -36,14 +40,14 @@ def get_product(product_id: int):
         )
 
 @router.get("/products")
-def get_products():
-    products = get_products_service()
+def get_products(db: Session = Depends(get_db)):
+    products = get_products_service(db)
     return products
     
 @router.put("/products/{product_id}")
-def modify_product(product_id: int, product_data: ProductCreate):
+def update_product(product_id: int, product_data: ProductCreate, db: Session = Depends(get_db)):
     try:
-        return modify_product_service(product_id, product_data)
+        return update_product_service(product_id, product_data, db)
     
     except ProductNotFoundError:
         raise HTTPException(
@@ -56,10 +60,10 @@ def modify_product(product_id: int, product_data: ProductCreate):
             status_code=409,
             detail="Product stock not available",
         )
-
-def delete_product(product_id: int):
+@router.delete("/products/{product_id}")
+def delete_product(product_id: int, db: Session = Depends(get_db)):
     try:
-        return delete_product_service(product_id)
+        return delete_product_service(product_id, db)
     
     except ProductNotFoundError:
         raise HTTPException(
