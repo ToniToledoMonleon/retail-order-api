@@ -31,7 +31,6 @@ def get_product_service(product_id: int, db: Session):
     return product
 
 def get_products_service(db: Session):
-    
     return get_products(db)
 
 def delete_product_service(product_id: int, db: Session):

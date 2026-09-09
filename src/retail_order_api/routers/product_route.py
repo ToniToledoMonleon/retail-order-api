@@ -8,6 +8,7 @@ from retail_order_api.db.database import get_db
 
 router = APIRouter()
 
+# Crear un nuevo producto
 @router.post("/")
 def create_product(product_data: ProductCreate, db: Session = Depends(get_db)):
     try:
@@ -21,6 +22,7 @@ def create_product(product_data: ProductCreate, db: Session = Depends(get_db)):
         "product": product
     }
 
+# Obtener un producto por su ID
 @router.get("/products/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
     try:
@@ -38,11 +40,12 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
             status_code=409,
             detail="Product stock not available",
         )
-
+# Obtener todos los productos
 @router.get("/products", response_model=list[ProductResponse])
 def get_all_products(db: Session = Depends(get_db)):
     return get_products_service(db)
-    
+
+# Actualizar un producto existente   
 @router.patch("/products/{product_id}")
 def update_product(product_id: int, product_data: ProductUpdate, db: Session = Depends(get_db)):
     try:

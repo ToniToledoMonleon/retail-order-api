@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
+from retail_order_api.config import settings
 
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg://admin:1234@localhost:5432/retail_order_api_db"
-
-engine = create_engine(SQLALCHEMY_DATABASE_URI)
+engine = create_engine(settings.database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

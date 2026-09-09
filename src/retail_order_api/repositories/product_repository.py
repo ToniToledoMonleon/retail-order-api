@@ -21,7 +21,8 @@ def update_product(product: Product, product_data: dict, db: Session):
 
 def get_products(db: Session):
     statement = select(Product)
-    
+
+    # Scalars devuelve un iterador de los resultados, y luego convertimos a lista
     return db.scalars(statement).all()
 
 def get_product_by_id(product_id: int, db: Session):
