@@ -56,7 +56,7 @@ def downgrade() -> None:
         "products",
         type_="unique",
     )
-    op.drop_column('products', 'update_at')
+    op.drop_column('products', 'updated_at')
     op.drop_column('products', 'created_at')
     op.drop_column('products', 'active')
     op.drop_column('products', 'sku')

@@ -2,9 +2,7 @@
 from sqlalchemy.orm import Session
 
 from retail_order_api.repositories.product_repository import delete_product, get_product_by_id, get_products, update_product, save_product
-
-class ProductNotFoundError(Exception):
-    pass 
+from retail_order_api.exceptions.product import ProductNotFoundError
 
 class ProductStockNotAvailableError(Exception):
     pass
