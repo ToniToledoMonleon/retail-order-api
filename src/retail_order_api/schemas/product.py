@@ -6,9 +6,9 @@ class ProductCreate(BaseModel):
     stock : int = Field(ge=0)
 
 class ProductUpdate(BaseModel):
-    description : str | None = Field(min_length=1, max_length=200) 
-    price : float | None = Field(gt=0)
-    stock : int |None = Field(ge=0)
+    description : str | None = Field(default=None, min_length=1, max_length=200) 
+    price : float | None = Field(default=None, gt=0)
+    stock : int |None = Field(default=None, ge=0)
 
 class ProductResponse(BaseModel):
     id : int

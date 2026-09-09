@@ -27,7 +27,7 @@ def get_product_by_id(product_id: int, db: Session):
 def delete_product(product_id: int, db: Session):
     product = get_product_by_id(product_id, db)
     if product is None:
-        return False
+        return False, product
     
     db.delete(product)
     db.commit()

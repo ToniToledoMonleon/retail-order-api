@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 
 from retail_order_api.services.product_service import ProductNotFoundError, ProductStockNotAvailableError, delete_product_service, get_products_service, update_product_service, save_product_service, get_product_service
-from retail_order_api.schemas.product import ProductCreate, ProductResponse
+from retail_order_api.schemas.product import ProductCreate, ProductResponse, ProductUpdate
 from retail_order_api.db.database import get_db
 
 router = APIRouter()
@@ -44,8 +44,8 @@ def get_products(db: Session = Depends(get_db)):
     products = get_products_service(db)
     return products
     
-@router.put("/products/{product_id}")
-def update_product(product_id: int, product_data: ProductCreate, db: Session = Depends(get_db)):
+@router.patch("/products/{product_id}")
+def update_product(product_id: int, product_data: ProductUpdate, db: Session = Depends(get_db)):
     try:
         return update_product_service(product_id, product_data, db)
     

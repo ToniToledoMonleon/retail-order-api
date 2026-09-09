@@ -10,19 +10,14 @@ class ProductStockNotAvailableError(Exception):
     pass
 
 def save_product_service(product_data: dict, db: Session):
-    try:
-        return save_product(db, product_data.model_dump())
-    except Exception as e:
-        raise ProductNotFoundError()
+    return save_product(product_data.model_dump(), db)
+
 
 def update_product_service(product_id: int, product_data: dict, db: Session):
     product = get_product_by_id(product_id, db)
     
     if product is None:
         raise ProductNotFoundError()
-    
-    if product_data.stock <= 0:
-        raise ProductStockNotAvailableError()
     
     update_data = product_data.model_dump(exclude_unset=True)
 
@@ -33,9 +28,6 @@ def get_product_service(product_id: int, db: Session):
     if product is None:
         raise ProductNotFoundError()
     
-    if product.stock <= 0:
-        raise ProductStockNotAvailableError()
-
     return product
 
 def get_products_service(db: Session):
