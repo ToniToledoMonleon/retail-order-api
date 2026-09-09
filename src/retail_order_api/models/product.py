@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from sqlalchemy import Integer, Numeric, String
+from sqlalchemy import Integer, Numeric, String, Boolean, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 from retail_order_api.db.database import Base
 
@@ -13,6 +13,12 @@ class Product(Base):
         Integer,
         primary_key=True,
         index=True,
+    )
+
+    sku: Mapped[str] = mapped_column(
+        String(50),
+        unique=True,
+        nullable=False,
     )
 
     description: Mapped[str] = mapped_column(
@@ -28,4 +34,24 @@ class Product(Base):
     stock: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
+    )
+
+    active: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=True,
+        server_default="true"
+    )
+
+    created_at: Mapped[DateTime] = mapped_column(
+        DateTime,
+        nullable=False,
+        server_default=func.now()
+    )
+
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime,
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now()
     )
