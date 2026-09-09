@@ -1,4 +1,6 @@
-from sqlalchemy import Float, Integer, String
+from decimal import Decimal
+
+from sqlalchemy import Integer, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column
 from retail_order_api.db.database import Base
 
@@ -18,8 +20,8 @@ class Product(Base):
         nullable=False,
     )
 
-    price: Mapped[float] = mapped_column(
-        Float,
+    price: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2),
         nullable=False,
     )
 
