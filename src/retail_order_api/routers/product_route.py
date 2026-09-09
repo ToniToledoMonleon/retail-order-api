@@ -39,10 +39,9 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
             detail="Product stock not available",
         )
 
-@router.get("/products")
-def get_products(db: Session = Depends(get_db)):
-    products = get_products_service(db)
-    return products
+@router.get("/products", response_model=list[ProductResponse])
+def get_all_products(db: Session = Depends(get_db)):
+    return get_products_service(db)
     
 @router.patch("/products/{product_id}")
 def update_product(product_id: int, product_data: ProductUpdate, db: Session = Depends(get_db)):
@@ -60,7 +59,8 @@ def update_product(product_id: int, product_data: ProductUpdate, db: Session = D
             status_code=409,
             detail="Product stock not available",
         )
-@router.delete("/products/{product_id}")
+    
+@router.delete("/products/{product_id}", response_model=ProductResponse,)
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     try:
         return delete_product_service(product_id, db)

@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from retail_order_api.models.product import Product
 
@@ -19,16 +20,13 @@ def update_product(product: Product, product_data: dict, db: Session):
     return product
 
 def get_products(db: Session):
-    return db.query(Product).all()
+    statement = select(Product)
+    
+    return db.scalars(statement).all()
 
 def get_product_by_id(product_id: int, db: Session):
     return db.query(Product).filter(Product.id == product_id).first()
 
-def delete_product(product_id: int, db: Session):
-    product = get_product_by_id(product_id, db)
-    if product is None:
-        return False, product
-    
+def delete_product(product: Product, db: Session):
     db.delete(product)
     db.commit()
-    return True, product

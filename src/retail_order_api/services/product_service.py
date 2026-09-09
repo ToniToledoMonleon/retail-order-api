@@ -31,12 +31,14 @@ def get_product_service(product_id: int, db: Session):
     return product
 
 def get_products_service(db: Session):
-    products = get_products(db)
-    return products
+    
+    return get_products(db)
 
 def delete_product_service(product_id: int, db: Session):
-    deleted, product = delete_product( product_id, db)
-    if not deleted:
+    product = get_product_by_id(product_id, db)
+    if product is None:
         raise ProductNotFoundError()
+
+    delete_product(product, db)
 
     return product
