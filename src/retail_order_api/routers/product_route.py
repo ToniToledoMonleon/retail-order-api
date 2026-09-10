@@ -1,12 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated, Literal
+
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 
 from retail_order_api.exceptions.product import (
     ProductSkuAlreadyExistsError,
     ProductNotFoundError,
 )
+from retail_order_api.schemas.product_filters import ProductFilters
 from retail_order_api.services.product_service import ProductStockNotAvailableError, delete_product_service, get_products_service, update_product_service, save_product_service, get_product_service
-from retail_order_api.schemas.product import ProductCreate, ProductResponse, ProductUpdate
+from retail_order_api.schemas.product import ProductCreate, ProductResponse, ProductUpdate, ProductListResponse
 from retail_order_api.db.database import get_db
 
 router = APIRouter()
@@ -47,9 +50,23 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
             detail="Product stock not available",
         )
 # Obtener todos los productos
-@router.get("/products", response_model=list[ProductResponse])
-def get_all_products(db: Session = Depends(get_db)):
-    return get_products_service(db)
+@router.get("/products", response_model=ProductListResponse)
+def get_all_products(
+        filters: Annotated[ProductFilters, Query()],
+        db: Session = Depends(get_db)
+    ):
+
+    return get_products_service(
+        active=filters.active, 
+        min_price=filters.min_price,
+        max_price=filters.max_price,
+        search=filters.search, 
+        sort_by=filters.sort_by, 
+        sort_order=filters.sort_order, 
+        limit=filters.limit, 
+        offset=filters.offset, 
+        db=db
+    )
 
 # Actualizar un producto existente   
 @router.patch("/products/{product_id}")

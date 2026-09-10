@@ -25,3 +25,10 @@ class ProductResponse(BaseModel):
     updated_at : datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+# Respuesta para la lista de productos con paginación
+class ProductListResponse(BaseModel):
+    items: list[ProductResponse]
+    total: int
+    limit: int
+    offset: int
