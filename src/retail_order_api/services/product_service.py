@@ -40,10 +40,13 @@ def get_products_service(active: bool | None,
                          offset: int, 
                          db: Session
                         ):
-    
+
+    # Primero obtenemos los productos y el total de productos que cumplen con los filtros
     products = get_products(active, min_price, max_price, search, sort_by, sort_order, limit, offset, db)
+    # Luego obtenemos el total de productos que cumplen con los filtros
     total = count_products(active, min_price, max_price, search, db)
 
+    # Devolvemos un diccionario con los productos y el total de productos que cumplen con los filtros
     return {
             "items": products, 
             "total": total, 

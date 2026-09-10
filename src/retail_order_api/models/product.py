@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, Integer, Numeric, String, Boolean, DateTime, func
+from sqlalchemy import CheckConstraint, Index, Integer, Numeric, String, Boolean, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 from retail_order_api.db.database import Base
 
@@ -17,6 +17,22 @@ class Product(Base):
         CheckConstraint(
             "stock >= 0",
             name="ck_products_stock_non_negative",
+        ),
+        Index(
+            "ix_products_description_trgm",
+            "description",
+            postgresql_using="gin",
+            postgresql_ops={
+                "description": "gin_trgm_ops",
+            },
+        ),
+        Index(
+            "ix_products_sku_trgm",
+            "sku",
+            postgresql_using="gin",
+            postgresql_ops={
+                "sku": "gin_trgm_ops",
+            },
         ),
     )
     
