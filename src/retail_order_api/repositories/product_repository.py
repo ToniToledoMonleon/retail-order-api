@@ -14,10 +14,19 @@ def save_product(product_data: dict, db: Session):
         db.add(new_product)
         db.commit()
         db.refresh(new_product)
-    except IntegrityError:
+    except IntegrityError as exc:
         db.rollback()
-        raise ProductSkuAlreadyExistsError()
 
+        constraint_name = getattr(
+            getattr(exc.orig, "diag", None),
+            "constraint_name",
+            None,
+        )
+
+        if constraint_name == "uq_products_sku":
+            raise ProductSkuAlreadyExistsError() from exc
+
+        raise
     return new_product
 
 def update_product(product: Product, product_data: dict, db: Session):
@@ -29,10 +38,19 @@ def update_product(product: Product, product_data: dict, db: Session):
         db.refresh(product)
         return product
 
-    except IntegrityError:
+    except IntegrityError as exc:
         db.rollback()
-        raise ProductSkuAlreadyExistsError()
 
+        constraint_name = getattr(
+            getattr(exc.orig, "diag", None),
+            "constraint_name",
+            None,
+        )
+
+        if constraint_name == "uq_products_sku":
+            raise ProductSkuAlreadyExistsError() from exc
+
+        raise
 
 def get_products(db: Session):
     statement = select(Product)

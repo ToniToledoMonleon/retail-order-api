@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from sqlalchemy import Integer, Numeric, String, Boolean, DateTime, func
+from sqlalchemy import CheckConstraint, Integer, Numeric, String, Boolean, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 from retail_order_api.db.database import Base
 
@@ -9,6 +9,17 @@ from retail_order_api.db.database import Base
 class Product(Base):
     __tablename__ = "products"
 
+    __table_args__ = (
+        CheckConstraint(
+            "price > 0",
+            name="ck_products_price_positive",
+        ),
+        CheckConstraint(
+            "stock >= 0",
+            name="ck_products_stock_non_negative",
+        ),
+    )
+    
     id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,
